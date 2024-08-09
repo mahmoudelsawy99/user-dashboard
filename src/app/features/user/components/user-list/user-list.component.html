@@ -1,0 +1,95 @@
+<div [@fadeInOut]>
+  <mat-toolbar class="d-flex justify-content-between">
+    <mat-form-field class="col-md-5 mt-4 py-1">
+      <input matInput placeholder="Search by ID" (input)="onSearch($event)">
+    </mat-form-field>
+    <div>
+      <i class="fa-solid fa-grip fa-lg mx-2" (click)="toggleView()" [class.active]="isCardView"
+        title="Switch to Card View">
+      </i>
+      <i class="fa-solid fa-list" (click)="toggleView()" [class.active]="!isCardView" title="Switch to List View">
+      </i>
+    </div>
+  </mat-toolbar>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+  <div *ngIf="isCardView; else ListView">
+
+    <div class="container text-center">
+      <div class="row justify-content-around align-items-center ">
+        <div class="card-container col-12 col-sm-6 col-md-3 col-lg-3 m-3 pb-2" *ngFor="let user of users">
+          <span class="pro">{{user.id}}</span>
+          <img  width="125" height="125" class="round" [src]="user.avatar" alt="{{ user.first_name }}" />
+          <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+          <p> {{ user.email}} </p>
+          <div class="buttons" appHoverAnimation >
+            <button (click)="goToUserDetails(user.id)" class="primary ghost">
+              <i class="fa-solid fa-eye fa-fade fa-lg"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+      <mat-paginator class="mt-3"[length]="totalUsers" [pageSize]="6"  (page)="onPageChange($event)">
+      </mat-paginator>
+     </div>
+  </div>
+
+  <ng-template #ListView>
+
+    <div class=" table-wrapper mt-3 user-list-container">
+       <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)"
+        class="mat-elevation-z8">
+        <!-- No Column -->
+        <ng-container matColumnDef="no">
+          <th mat-header-cell *matHeaderCellDef> No. </th>
+          <td mat-cell *matCellDef="let element; let i = index"> {{i + 1}} </td>
+        </ng-container>
+
+        <!-- First Name Column -->
+        <ng-container matColumnDef="first_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> First Name </th>
+          <td mat-cell *matCellDef="let element"> {{element.first_name}} </td>
+        </ng-container>
+
+        <!-- Last Name Column -->
+        <ng-container matColumnDef="last_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Name </th>
+          <td mat-cell *matCellDef="let element"> {{element.last_name}} </td>
+        </ng-container>
+
+        <!-- Email Column -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
+          <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+        </ng-container>
+
+        <!-- Avatar Column -->
+        <ng-container matColumnDef="avatar">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Avatar </th>
+          <td mat-cell *matCellDef="let element">
+            <img [src]="element.avatar" alt="{{element.avatar}}" width="50">
+          </td>
+        </ng-container>
+
+        <!-- View Column -->
+        <ng-container matColumnDef="view" appHoverAnimation >
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> View </th>
+          <td mat-cell *matCellDef="let element">
+            <span (click)="goToUserDetails(element.id)" class="icon-parent">
+              <i class="fa-solid fa-eye fa-fade fa-lg"></i>
+            </span>
+
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <mat-paginator class="mt-3"[length]="totalUsers" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" (page)="onPageChange($event)">
+      </mat-paginator>
+    </div>
+  </ng-template>
+
+</div>
